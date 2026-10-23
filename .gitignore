@@ -1,0 +1,34 @@
+# environments
+.venv/
+venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# jupyter
+.ipynb_checkpoints/
+
+# model weights / checkpoints (regenerate with `python -m twotower.train --save`)
+artifacts/
+
+# raw data: production DB exports (real user/shop ids) - keep out of the public repo
+dataset/
+Dataset/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# per-run dumps; reports/runs.csv has the same numbers
+reports/*.json
+reports/old/
+
+# original Colab notebook: saved outputs contain real ids; add back after clearing outputs
+notebooks/
