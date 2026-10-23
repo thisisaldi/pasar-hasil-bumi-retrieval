@@ -12,7 +12,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+serve = ["fastapi>=0.110", "uvicorn"]  # API only; Docker uses requirements-serve.txt (no TensorFlow)
+dev = ["pytest", "fastapi>=0.110", "httpx"]
 
 [build-system]
 requires = ["setuptools>=68"]

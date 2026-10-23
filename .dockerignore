@@ -1,0 +1,5 @@
+*
+!requirements-serve.txt
+!src/twotower/__init__.py
+!src/twotower/serve.py
+!serving/bundle.json

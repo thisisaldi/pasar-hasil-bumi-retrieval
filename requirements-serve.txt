@@ -1,0 +1,4 @@
+# runtime deps for the API only (no TensorFlow); tested versions
+fastapi==0.161.1
+uvicorn==0.54.0
+numpy==1.26.4
