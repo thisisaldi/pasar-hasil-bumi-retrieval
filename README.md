@@ -12,11 +12,16 @@ Cart items are masked at ranking time (a basket never repeats a product).
 Data: `dataset/` (not in the repo - production exports; place the CSVs there) (`prod.users.csv`, `prod.products.csv`, `transactions.csv`). Each run prints a table, appends to
 `reports/runs.csv`, writes `reports/<tag>.json` (`--save` stores weights in `artifacts/<tag>`).
 
+## Architecture
+![architecture](reports/architecture.png)
+
+Regenerate: `python -m twotower.diagram`. Dashed boxes are optional (`--cart`, `--dat`).
+
 ## Layout
 - `src/twotower/data.py` load, time split 70/10/20, cart features
 - `src/twotower/metrics.py` full-catalog hit@k + baselines (random, popularity, personal frequency)
 - `src/twotower/model.py` towers + TFRS model; `train.py` CLI, early stopping on val hit
-- `notebooks/` original Colab notebook (kept for reference); `reports/` run logs
+- `src/twotower/diagram.py` architecture figure; `reports/` run logs, curves, diagram
 
 ## Results (test, cart-masked hit@k)
 ![training curves](reports/final_curves.png)
