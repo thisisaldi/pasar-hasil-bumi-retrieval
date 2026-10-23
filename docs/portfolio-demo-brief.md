@@ -87,9 +87,20 @@ as misses.
 1. **Project page** (e.g. `/projects/pasar-hasil-bumi`). Cover the problem in 2-3 sentences, the
    undergraduate thesis context and the stack (TensorFlow Recommenders, numpy, FastAPI, Vercel). Link
    the GitHub repo and the Swagger docs.
-2. **Retrieval explorer** (client component):
-   - Pick an example basket from `/examples` (default to the first one), or build a custom one: any
-     user from `/users` plus products from `/products`.
+2. **Retrieval explorer** (client component) with two modes:
+   - **Test baskets**: pick one of the 8 baskets from `/examples` (default to the first one). This shows
+     a real held-out evaluation case.
+   - **Free play**: the visitor picks **any user** from `/users` and **any products** from `/products`
+     as their basket, then sees the live ranking.
+   - The **user** is what drives the ranking, so make the user picker the primary control. Show users
+     with their `train_interactions`, and add a "random user" button.
+   - Basket products are **excluded from results only**; they don't change the scores. Label the product
+     picker accordingly (e.g. "Already in basket (excluded)"), and add a one-line explanation:
+     "This model ranks by shopper history. Basket items are removed from results, not used as signals."
+     Without this, a visitor who adds an item and sees the list barely change will think it's broken.
+     Verified live: u39 with an empty basket gives p32 p40 p31 p17 p20 p11. With [p17, p01] it gives
+     p32 p40 p31 p20 p11 p38. u05 with the same basket gives p40 p14 p12 p42 p22 p32.
+   - Re-run the request on every change (debounced). Group products by `category` in the picker.
    - Controls: k (default 5), and a baseline (personal frequency / popularity / none).
    - Show the two-tower top-k and the baseline top-k side by side: rank, product name, price as IDR
      (`Intl.NumberFormat("id-ID", {style: "currency", currency: "IDR"})`), score, and a muted
