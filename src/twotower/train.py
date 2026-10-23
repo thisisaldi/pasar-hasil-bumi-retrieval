@@ -48,6 +48,26 @@ class ValHit(tf.keras.callbacks.Callback):
         logs["val_hit"] = float(np.mean([h["hit@1"], h["hit@3"], h["hit@5"]]))
 
 
+def plot_curves(h, best, path):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    path.parent.mkdir(exist_ok=True)
+    ep = np.arange(1, len(h["loss"]) + 1)
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+    ax[0].plot(ep, h["loss"], color="tab:blue")
+    ax[0].set(title="Training loss (in-batch softmax)", xlabel="epoch", ylabel="loss")
+    ax[1].plot(ep, h["val_hit"], color="tab:red")
+    ax[1].axvline(best + 1, ls="--", color="gray", label=f"best epoch {best + 1} (restored)")
+    ax[1].set(title="Validation hit (mean of hit@1/3/5, cart-masked)", xlabel="epoch", ylabel="hit rate")
+    ax[1].legend()
+    for a_ in ax:
+        a_.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(path, dpi=130)
+    plt.close(fig)
+
+
 def main(argv=None):
     a = parse(argv)
     tf.keras.utils.set_random_seed(a.seed)
@@ -68,6 +88,8 @@ def main(argv=None):
     best = int(np.argmax(hist.history["val_hit"]))
     print(f"stopped at epoch {len(hist.history['loss'])}, best epoch {best + 1}, "
           f"val_hit {max(hist.history['val_hit']):.4f}, {time.time() - t0:.0f}s")
+
+    plot_curves(hist.history, best, REPORTS / f"{a.tag}_curves.png")
 
     S, y = model.scores(d.test, d.test_cart), d.targets(d.test)
     results["two_tower"] = hit_rate(S, y, d.test_cart, False)

@@ -9,7 +9,7 @@ Cart items are masked at ranking time (a basket never repeats a product).
     .venv/Scripts/python.exe -m pytest
     .venv/Scripts/python.exe -m twotower.train --tag mine [--cart --drop 0.2 --dim 64 ...]
 
-Data: `dataset/` (`prod.users.csv`, `prod.products.csv`, `transactions.csv`). Each run prints a table, appends to
+Data: `dataset/` (not in the repo - production exports; place the CSVs there) (`prod.users.csv`, `prod.products.csv`, `transactions.csv`). Each run prints a table, appends to
 `reports/runs.csv`, writes `reports/<tag>.json` (`--save` stores weights in `artifacts/<tag>`).
 
 ## Layout
@@ -19,6 +19,8 @@ Data: `dataset/` (`prod.users.csv`, `prod.products.csv`, `transactions.csv`). Ea
 - `notebooks/` original Colab notebook (kept for reference); `reports/` run logs
 
 ## Results (test, cart-masked hit@k)
+![training curves](reports/final_curves.png)
+
 | | @1 | @3 | @5 | @10 |
 |---|---|---|---|---|
 | popularity | 0.098 | 0.236 | 0.358 | 0.584 |
