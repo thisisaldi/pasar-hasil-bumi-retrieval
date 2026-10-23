@@ -59,7 +59,7 @@ flowchart LR
     PYTHONPATH=src .venv-serve/Scripts/python.exe -m uvicorn twotower.serve:app --port 8000
     # open http://localhost:8000/docs for interactive Swagger UI
 
-    docker build -t phb-retrieval . && docker run -p 8000:8000 -e CORS_ORIGINS=http://localhost:3000 phb-retrieval
+    docker build -t phb-retrieval . && docker run -p 8000:8000 phb-retrieval
 
 Example request using a held-out test basket from `GET /examples`:
 

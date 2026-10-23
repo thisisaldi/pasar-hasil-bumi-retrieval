@@ -19,6 +19,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 DEFAULT_BUNDLE = Path(__file__).resolve().parents[2] / "serving" / "bundle.json"
+DEFAULT_ORIGINS = "https://naufaldi.vercel.app,https://nfaldi.dev,http://localhost:3000"  # portfolio + local Next.js
 Baseline = Literal["personal_frequency", "popularity"]
 
 
@@ -119,7 +120,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Pasar Hasil Bumi retrieval API", version="0.1.0", lifespan=lifespan,
               description="Two-tower product retrieval for an agricultural marketplace (undergraduate thesis project).")
 app.add_middleware(CORSMiddleware, allow_methods=["GET", "POST"], allow_headers=["content-type"],
-                   allow_origins=[o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()])
+                   allow_origins=[o.strip() for o in os.environ.get("CORS_ORIGINS", DEFAULT_ORIGINS).split(",") if o.strip()])
 
 
 def bundle(request: Request) -> Bundle:

@@ -13,7 +13,7 @@
 | Env var | Default | Purpose |
 |---|---|---|
 | `BUNDLE_PATH` | `serving/bundle.json` | exported model bundle. The app fails at startup if it is missing. |
-| `CORS_ORIGINS` | `http://localhost:3000` | comma-separated allowed origins, e.g. `https://<portfolio>.vercel.app,https://<custom-domain>` |
+| `CORS_ORIGINS` | `https://naufaldi.vercel.app,https://nfaldi.dev,http://localhost:3000` | comma-separated allowed origins. Setting this replaces the default list entirely. |
 | `PORT` | `8000` | Docker only |
 
 The API has no secrets. If you add a key later (rate limiting, analytics), keep it in the host's env
@@ -26,7 +26,7 @@ settings and call the API from a Next.js route handler, not from the browser.
 
 ## Docker
     docker build -t phb-retrieval .
-    docker run -p 8000:8000 -e CORS_ORIGINS=https://<portfolio-domain> phb-retrieval
+    docker run -p 8000:8000 phb-retrieval      # add -e CORS_ORIGINS=... to override the default origins
 
 The image contains only `serve.py`, `__init__.py` and the bundle (see `.dockerignore`).
 
@@ -51,7 +51,9 @@ The repo is set up for Vercel's zero-config FastAPI support:
 2. In the Vercel dashboard, go to Add New, then Project, and import `thisisaldi/pasar-hasil-bumi-retrieval`.
 3. Leave the framework preset as detected (FastAPI or Python) and the root directory as `./`. Add no
    build command.
-4. Under Environment Variables, add `CORS_ORIGINS` = `https://<portfolio-domain>,http://localhost:3000`.
+4. Environment variables are optional. The portfolio origins (`naufaldi.vercel.app`, `nfaldi.dev`,
+   `localhost:3000`) are the built-in default. Set `CORS_ORIGINS` only to change them, for example to
+   add `https://www.nfaldi.dev` if you serve the `www` subdomain.
 5. Deploy. Every later push to `main` redeploys, and branches get preview URLs.
 
 **Option B: CLI.**
@@ -59,7 +61,6 @@ The repo is set up for Vercel's zero-config FastAPI support:
     npm i -g vercel            # CLI >= 48.1.8
     vercel login
     vercel link                # create or link the project
-    vercel env add CORS_ORIGINS production
     vercel --prod
 
 **After deploying, check:**

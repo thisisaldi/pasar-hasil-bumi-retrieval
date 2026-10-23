@@ -67,6 +67,13 @@ def test_recommend_rejects_bad_input(client, payload, code):
     assert client.post("/recommend", json=payload).status_code == code
 
 
+@pytest.mark.parametrize("origin, allowed", [
+    ("https://nfaldi.dev", True), ("https://naufaldi.vercel.app", True), ("https://evil.example", False)])
+def test_cors_default_origins(client, origin, allowed):
+    r = client.options("/recommend", headers={"Origin": origin, "Access-Control-Request-Method": "POST"})
+    assert (r.headers.get("access-control-allow-origin") == origin) == allowed
+
+
 def test_published_bundle_is_consistent():
     if not serve.DEFAULT_BUNDLE.exists():
         pytest.skip("serving/bundle.json not exported")
