@@ -1,0 +1,10 @@
+# never upload private data, weights or local envs from a CLI deploy
+dataset/
+Dataset/
+artifacts/
+notebooks/
+reports/*.json
+reports/old/
+.venv*/
+.claude/
+tests/

@@ -3,7 +3,7 @@
 ## Runtime profile (measured locally)
 | | |
 |---|---|
-| Runtime deps | `fastapi`, `uvicorn`, `numpy` (`requirements-serve.txt`). No TensorFlow. |
+| Runtime deps | `fastapi`, `uvicorn`, `numpy` (`pyproject.toml` base deps; `requirements-serve.txt` pins them for Docker). No TensorFlow. |
 | Model artifact | `serving/bundle.json`, 106 KB, committed |
 | Memory | about 30 MB peak while loading the bundle, plus about 60 MB for Python and FastAPI |
 | Inference | about 0.25 ms per `/recommend` (45 dot products and a sort), in-process |
@@ -37,14 +37,51 @@ The export stops if the restored model or the exported vectors do not reproduce 
 metrics. It also replaces user, shop, category and product database ids with pseudonyms (`u01`,
 `shop1`, `cat1`, `p01`). Product names and prices are kept.
 
-## Hosting
-The workload is a tiny stateless numpy service, so any container host works:
-- **Google Cloud Run** or **Render / Fly.io**: deploy the Dockerfile as-is. Scale to zero is fine
-  because startup is under a few seconds. This is the recommended option.
-- **Vercel Python Functions**: also feasible, because the runtime has no TensorFlow and the bundle is
-  106 KB. You would need a `vercel.json` / `api/` entrypoint, which is not included. Keep the API as its
-  own project rather than inside the Next.js app, so the two deploy independently.
-- Not needed: GPU, a database, a vector store.
+## Deploy on Vercel
+The repo is set up for Vercel's zero-config FastAPI support:
+- `app.py` at the root is a default Vercel entrypoint. It re-exports `twotower.serve:app`.
+- `pyproject.toml` base dependencies are only `fastapi`, `uvicorn` and `numpy`, so Vercel never
+  installs TensorFlow. TensorFlow lives in the `train` extra.
+- Vercel runs Python 3.12 (its default). The API was tested on 3.12 with numpy 2.
+- `serving/bundle.json` ships inside the function bundle, and the app reads it at startup.
+- `.vercelignore` keeps `dataset/`, `artifacts/`, `notebooks/` and local venvs out of CLI uploads.
+
+**Option A: Git (recommended).**
+1. Merge the branch into `main`.
+2. In the Vercel dashboard, go to Add New, then Project, and import `thisisaldi/pasar-hasil-bumi-retrieval`.
+3. Leave the framework preset as detected (FastAPI or Python) and the root directory as `./`. Add no
+   build command.
+4. Under Environment Variables, add `CORS_ORIGINS` = `https://<portfolio-domain>,http://localhost:3000`.
+5. Deploy. Every later push to `main` redeploys, and branches get preview URLs.
+
+**Option B: CLI.**
+
+    npm i -g vercel            # CLI >= 48.1.8
+    vercel login
+    vercel link                # create or link the project
+    vercel env add CORS_ORIGINS production
+    vercel --prod
+
+**After deploying, check:**
+
+    curl https://<RETRIEVAL_API_URL>/health
+    curl -X POST https://<RETRIEVAL_API_URL>/recommend -H "content-type: application/json" \
+      -d '{"user_id":"u39","cart":["p32","p31","p40"],"k":3}'
+
+`/health` should report 96 users and 45 products. `/recommend` should return `p17` at rank 1.
+`https://<RETRIEVAL_API_URL>/` redirects to the Swagger UI.
+
+Notes:
+- Cold starts are expected to take a second or two, mostly importing FastAPI and numpy. This has not
+  been measured on Vercel. The bundle itself loads in milliseconds. The first request after idle is
+  slower; later requests are a sub-millisecond computation.
+- CORS changes need a redeploy, because env vars are read at startup.
+- If the portfolio and API end up on the same domain via Vercel Services or rewrites, CORS isn't needed.
+
+## Other hosts
+The workload is a tiny stateless numpy service, so any container host also works. **Google Cloud
+Run**, **Render** or **Fly.io** can deploy the `Dockerfile` as-is. You don't need a GPU, a database or a
+vector store.
 
 Production URL: `https://<RETRIEVAL_API_URL>` (placeholder, not deployed yet).
 

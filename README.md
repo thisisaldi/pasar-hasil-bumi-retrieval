@@ -66,12 +66,13 @@ Example request using a held-out test basket from `GET /examples`:
     curl -X POST localhost:8000/recommend -H "content-type: application/json" \
       -d '{"user_id":"u39","cart":["p32","p31","p40"],"k":5,"baseline":"personal_frequency"}'
 
-The basket's hidden item `p17` (Daun Bawang) comes back at rank 1. The full contract, error codes,
+The basket's hidden item `p17` (Daun Bawang) comes back at rank 1. To deploy, import the repo into
+Vercel. The root `app.py` is the entrypoint; see [Deploy on Vercel](docs/integration.md#deploy-on-vercel). The full contract, error codes,
 env vars, CORS and hosting notes are in [docs/integration.md](docs/integration.md).
 
 ## Train, evaluate, export (needs the private dataset)
     uv venv .venv --python 3.11          # TF 2.15 needs Python <= 3.11
-    uv pip install --python .venv/Scripts/python.exe -e ".[dev]"
+    uv pip install --python .venv/Scripts/python.exe -e ".[train,dev]"   # base deps are API-only
     .venv/Scripts/python.exe -m pytest
     .venv/Scripts/python.exe -m twotower.train --tag mine [--cart --drop 0.2 --dim 64 --dat --save ...]
     .venv/Scripts/python.exe -m twotower.export --tag final   # needs artifacts/final (from --save)

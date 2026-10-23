@@ -2,18 +2,23 @@
 name = "twotower"
 version = "0.1.0"
 description = "Two-tower retrieval for Pasar Hasil Bumi (cart-aware product recommendation)"
-requires-python = ">=3.10,<3.12"  # tensorflow 2.15 has no wheels for 3.12+
+requires-python = ">=3.10"  # training extra needs <=3.11 (tensorflow 2.15); serving runs on 3.12 (Vercel)
+# base deps = the API runtime only, so Vercel installs no TensorFlow
 dependencies = [
+    "fastapi>=0.110",
+    "uvicorn",
+    "numpy",
+]
+
+[project.optional-dependencies]
+train = [
     "tensorflow==2.15.1",
     "tensorflow-recommenders==0.7.3",
     "numpy<2",
     "pandas",
     "matplotlib",
 ]
-
-[project.optional-dependencies]
-serve = ["fastapi>=0.110", "uvicorn"]  # API only; Docker uses requirements-serve.txt (no TensorFlow)
-dev = ["pytest", "fastapi>=0.110", "httpx"]
+dev = ["pytest", "httpx", "pandas"]
 
 [build-system]
 requires = ["setuptools>=68"]

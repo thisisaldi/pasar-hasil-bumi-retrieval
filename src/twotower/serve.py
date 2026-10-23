@@ -15,6 +15,7 @@ from typing import Literal
 import numpy as np
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 DEFAULT_BUNDLE = Path(__file__).resolve().parents[2] / "serving" / "bundle.json"
@@ -123,6 +124,11 @@ app.add_middleware(CORSMiddleware, allow_methods=["GET", "POST"], allow_headers=
 
 def bundle(request: Request) -> Bundle:
     return request.app.state.bundle
+
+
+@app.get("/", include_in_schema=False)
+def root():
+    return RedirectResponse("/docs")
 
 
 @app.get("/health", response_model=Health)
