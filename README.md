@@ -1,5 +1,7 @@
 # Two-tower retrieval: Pasar Hasil Bumi
 
+**Live API:** https://pasarhasilbumi-api.vercel.app (interactive docs at [`/docs`](https://pasarhasilbumi-api.vercel.app/docs))
+
 Product retrieval for **Pasar Hasil Bumi**, an agricultural marketplace (vegetables, fruit and spices
 from local shops). Given a shopper and the basket they are building, rank the 45 catalogue products by
 what they are most likely to add next. This repo is the engineering side of my undergraduate thesis on

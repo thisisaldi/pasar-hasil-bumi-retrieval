@@ -65,12 +65,12 @@ The repo is set up for Vercel's zero-config FastAPI support:
 
 **After deploying, check:**
 
-    curl https://<RETRIEVAL_API_URL>/health
-    curl -X POST https://<RETRIEVAL_API_URL>/recommend -H "content-type: application/json" \
+    curl https://pasarhasilbumi-api.vercel.app/health
+    curl -X POST https://pasarhasilbumi-api.vercel.app/recommend -H "content-type: application/json" \
       -d '{"user_id":"u39","cart":["p32","p31","p40"],"k":3}'
 
 `/health` should report 96 users and 45 products. `/recommend` should return `p17` at rank 1.
-`https://<RETRIEVAL_API_URL>/` redirects to the Swagger UI.
+`https://pasarhasilbumi-api.vercel.app/` redirects to the Swagger UI.
 
 Notes:
 - Cold starts are expected to take a second or two, mostly importing FastAPI and numpy. This has not
@@ -84,11 +84,11 @@ The workload is a tiny stateless numpy service, so any container host also works
 Run**, **Render** or **Fly.io** can deploy the `Dockerfile` as-is. You don't need a GPU, a database or a
 vector store.
 
-Production URL: `https://<RETRIEVAL_API_URL>` (placeholder, not deployed yet).
+Production URL: https://pasarhasilbumi-api.vercel.app (Swagger UI at `/docs`).
 
 ## API contract
 Interactive docs live at `/docs` (Swagger) and `/openapi.json`. TypeScript types can be generated from
-the OpenAPI spec, e.g. `npx openapi-typescript https://<RETRIEVAL_API_URL>/openapi.json -o retrieval.d.ts`.
+the OpenAPI spec, e.g. `npx openapi-typescript https://pasarhasilbumi-api.vercel.app/openapi.json -o retrieval.d.ts`.
 
 | Method | Path | Returns |
 |---|---|---|
